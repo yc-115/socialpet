@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>🌊 毛孩交友天地 - 友善商家與合作夥伴 🐾</title>
+    <meta content="毛孩社交地圖輔助頁面，精選寵物友善咖啡廳、餐廳、旅館、美容院" name="description">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet"> 
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        /* 🎨 全域/變數定義 - 青色冷色系主題 (友善商家頁面) */
+        :root {
+            /* 品牌核心色 (青色主題) */
+            --bs-primary: #39AEA9; /* 核心色：清爽青色 */
+            --bs-primary-rgb: 57, 174, 169;
+            --bs-secondary: #00796B; /* 深青色 (用於按鈕邊框/細節) */
+            --banner-main: var(--bs-primary); 
+            --banner-sub-text-color: #004D40; 
+            --text-light: #FFFFFF;
+            --border-accent: #5EDAD0; 
+            --button-border: #00796B; 
+            --dark-footer: #154360; 
+            --bs-light-bg: #E0F7FA; /* 淺天藍背景 */
+        }
+
+        /* 🖋️ 字體設定 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif; 
+            background-color: var(--bs-light-bg); 
+        }
+        h1, h3, h5, .creative-title-container *, .sub-text-under-banner {
+            font-family: 'Fredoka', sans-serif; 
+            font-weight: 700;
+        }
+        
+        /* 🏞️ 頁面標頭區塊 (Header) */
+        /* Header 保持置中對齊，讓標題旗幟看起來居中 */
+        .page-header { 
+            background: linear-gradient(135deg, var(--bs-light-bg) 0%, #B2EBF2 100%); 
+            padding: 50px 0; 
+            margin-bottom: 30px; 
+            min-height: 250px; 
+            position: relative; 
+            flex-direction: column; 
+        }
+        .page-header h1, .page-header p { 
+            display: none !important;
+        }
+
+        /* 🏆 創意標題樣式 (旗幟 - 青色) */
+        .creative-title-container {
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            z-index: 10; 
+        }
+        .main-title-banner {
+            background-color: var(--banner-main); 
+            color: var(--text-light);
+            padding: 20px 50px; 
+            font-size: 3rem; 
+            position: relative;
+            z-index: 2; 
+            clip-path: polygon(0 0, 5% 50%, 0 100%, 100% 100%, 95% 50%, 100% 0);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+        }
+        .sub-text-under-banner {
+            color: var(--banner-sub-text-color); 
+            font-size: 1.5rem;
+            margin-top: 10px; 
+            font-weight: 600;
+        }
+        .button-group-under-title {
+            margin-top: 25px; 
+        }
+
+        /* 內容區塊與卡片樣式 */
+        .btn-outline-primary {
+             color: var(--bs-secondary); 
+             border-color: var(--bs-secondary); 
+             background-color: #fff;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary.active { 
+            background-color: var(--bs-primary);
+            color: #fff;
+            border-color: var(--bs-primary);
+        }
+        .btn-sm.active { 
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+            color: #fff;
+        }
+
+        .partner-card {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); 
+            border-radius: 1rem; 
+            overflow: hidden; 
+        }
+        .partner-card:hover {
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        .partner-card img {
+            object-fit: cover;
+            height: 200px; 
+        }
+        .category-tag { 
+            font-size: 0.75rem; 
+            padding: .3rem .8rem; 
+            border-radius: 20px; 
+            font-weight: 700; 
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid page-header">
+        <div class="container text-center">
+            
+            <div class="creative-title-container">
+                <div class="main-title-banner">
+                    <i class="bi bi-shop me-2"></i>精選寵物友善商家
+                </div>
+            </div>
+            
+            <div class="sub-text-under-banner">您的毛孩社交生活，從這裡開始</div>
+            
+<div class="button-group-under-title">
+    <a href="{{ url_for('show_main_map') }}" class="btn btn-outline-primary btn-sm mt-3">
+        <i class="bi bi-arrow-left me-2"></i>返回地圖首頁
+    </a>
+</div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row g-5"> 
+
+            <div class="col-lg-12"> 
+                <div class="mb-5"> 
+                    <h2 class="fw-bold mb-3"><i class="bi bi-trophy-fill text-primary me-2"></i>精選寵物友善商家列表</h2>
+                    <p class="text-muted fs-6">本頁面匯集了所有「毛孩交友天地」推薦的寵物友善商家。</p>
+                    <hr class="w-100 mt-3 mb-4">
+                </div>
+
+                <div class="card p-3 mb-5 border-light bg-light">
+                    <p class="mb-2 fw-bold text-dark"><i class="bi bi-funnel-fill me-2"></i>按分類快速篩選：</p>
+                    <div class="d-flex flex-wrap gap-2" id="filter-buttons">
+                        <button type="button" class="btn btn-sm btn-primary active filter-btn" data-filter="all" onclick="filterPartners(this, 'all')"><i class="bi bi-grid-fill me-1"></i> 全部 (3)</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary filter-btn" data-filter="cafe" onclick="filterPartners(this, 'cafe')"><i class="bi bi-cup-hot-fill me-1"></i> 咖啡廳/餐廳 (2)</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary filter-btn" data-filter="spa" onclick="filterPartners(this, 'spa')"><i class="bi bi-scissors me-1"></i> 美容/SPA (1)</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary filter-btn" data-filter="hotel" onclick="filterPartners(this, 'hotel')"><i class="bi bi-building-fill me-1"></i> 住宿/旅館 (0)</button>
+                    </div>
+                </div>
+                
+                <div class="row g-4" id="partner-list"> 
+
+                    <div class="col-md-6 col-lg-4 partner-item" data-category="cafe">
+                        <div class="card partner-card h-100">
+                             <a href="https://www.facebook.com/oppapoodle/" target="_blank" title="大稻埕貴賓 寵物友善餐廳 詳情 (Facebook)">
+                                 <img src="{{ url_for('static', filename='img/store 1.jpg') }}" class="card-img-top" alt="大稻埕貴賓寵物友善餐廳">
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                 <div class="mb-2">
+                                     <span class="badge bg-warning text-dark category-tag">寵物主題餐廳</span>
+                                     <span class="badge bg-primary text-white category-tag"><i class="bi bi-geo-alt-fill me-1"></i> 台北</span>
+                                 </div>
+                                 <h5 class="card-title fw-bold">大稻埕貴賓 寵物友善餐廳</h5>
+                                 <p class="card-text text-muted small mb-3 flex-grow-1">
+                                     台北市大同區迪化街 | 百年古蹟老宅，有巨型貴賓店狗陪伴。
+                                 </p>
+                                 <ul class="list-unstyled small mb-3 p-2 border-start border-3 border-warning bg-light rounded">
+                                     <li><i class="bi bi-check-circle-fill text-primary me-2"></i>需穿禮貌帶，毛孩可落地</li>
+                                     <li class="fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>獨家優惠： 寵物鮮食餐九折優惠券</li>
+                                 </ul>
+                                 <a href="https://www.facebook.com/oppapoodle/" target="_blank" class="btn btn-sm btn-primary w-100 mt-auto">查看詳情 (新分頁開啟) </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 partner-item" data-category="cafe">
+                        <div class="card partner-card h-100">
+                             <a href="https://www.facebook.com/p/%25E9%25B9%25BF%25E9%258B%2585%25E6%25A3%25AE%25E6%259E%2597-100083366071225/" target="_blank" title="鹿雅森林景觀餐廳 詳情 (Facebook)">
+                                 <img src="{{ url_for('static', filename='img/store 2.jpg') }}" class="card-img-top" alt="鹿雅森林景觀餐廳">
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                 <div class="mb-2">
+                                     <span class="badge bg-primary text-white category-tag">景觀咖啡廳/餐廳</span>
+                                     <span class="badge bg-primary text-white category-tag"><i class="bi bi-geo-alt-fill me-1"></i> 台中</span>
+                                 </div>
+                                 <h5 class="card-title fw-bold">鹿雅森林 景觀餐廳</h5>
+                                 <p class="card-text text-muted small mb-3 flex-grow-1">
+                                     台中市沙鹿區 | 設有廣大草皮，可賞百萬夜景，有薩摩耶店狗。
+                                 </p>
+                                 <ul class="list-unstyled small mb-3 p-2 border-start border-3 border-primary bg-light rounded">
+                                     <li><i class="bi bi-check-circle-fill text-primary me-2"></i>設有戶外大草皮</li>
+                                     <li class="fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>獨家優惠： 入園門票升級全額折抵</li>
+                                 </ul>
+                                 <a href="https://www.facebook.com/p/%25E9%25B9%25BF%25E9%258B%2585%25E6%25A3%25AE%25E6%259E%2597-100083366071225/" target="_blank" class="btn btn-sm btn-primary w-100 mt-auto">查看詳情 (新分頁開啟) </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4 partner-item" data-category="spa">
+                        <div class="card partner-card h-100">
+                             <a href="https://www.facebook.com/people/比比狗寵物美容/100076161134229/" target="_blank" title="比比狗寵物美容 詳情 (Facebook)">
+                                 <img src="{{ url_for('static', filename='img/store 3.jpg') }}" class="card-img-top" alt="比比狗寵物美容">
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                 <div class="mb-2">
+                                     <span class="badge bg-danger text-white category-tag">專業美容/SPA</span>
+                                     <span class="badge bg-primary text-white category-tag"><i class="bi bi-geo-alt-fill me-1"></i> 台中*</span>
+                                 </div>
+                                 <h5 class="card-title fw-bold">比比狗寵物美容工坊</h5>
+                                 <p class="card-text text-muted small mb-3 flex-grow-1">
+                                     台中市豐原區附近 | 專業 KCT A級美容師，提供住宿服務。
+                                 </p>
+                                 <ul class="list-unstyled small mb-3 p-2 border-start border-3 border-danger bg-light rounded">
+                                     <li><i class="bi bi-check-circle-fill text-primary me-2"></i>提供貓狗美容與住宿</li>
+                                     <li class="fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>獨家優惠： 首次美容服務享九折</li>
+                                 </ul>
+                                 <a href="https://www.facebook.com/people/比比狗寵物美容/100076161134229/" target="_blank" class="btn btn-sm btn-primary w-100 mt-auto">查看詳情 (新分頁開啟) </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid footer-bar text-white-50 py-3 mt-auto bg-dark">
+        <div class="container text-center">
+            <p class="mb-0 small">&copy; 毛孩交友天地. All Rights Reserved. 讓毛孩們享受社交樂趣！</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function filterPartners(clickedButton, filterCategory) {
+            // 1. 處理按鈕樣式切換
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.classList.remove('active', 'btn-primary');
+                button.classList.add('btn-outline-primary');
+            });
+
+            clickedButton.classList.remove('btn-outline-primary');
+            clickedButton.classList.add('active', 'btn-primary');
+
+
+            // 2. 處理商家卡片顯示/隱藏
+            const partnerItems = document.querySelectorAll('.partner-item');
+            
+            partnerItems.forEach(item => {
+                const itemCategory = item.getAttribute('data-category');
+
+                if (filterCategory === 'all' || itemCategory === filterCategory) {
+                    item.classList.remove('d-none');
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>💜 社交安全與行為指引 🐾</title>
+    <meta content="毛孩社交地圖輔助頁面" name="description">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        /* 🎨 全域/變數定義 - 紫羅蘭冷色系主題 (社交指引頁面) */
+        :root {
+            /* 品牌核心色 (紫羅蘭主題) */
+            --bs-primary: #7B4397; /* 核心色：紫羅蘭 */
+            --bs-primary-rgb: 123, 67, 151;
+            --bs-secondary: #4A148C; /* 深靛藍 (用於按鈕邊框/Icon) */
+            --bs-light-bg: #EDE7F6; /* 淺薰衣草背景 */
+            
+            /* 旗幟配色 */
+            --banner-main: var(--bs-primary); 
+            --banner-sub-text-color: #301934; /* 深紫 */
+            --text-light: #FFFFFF;
+
+            /* 輔助顏色 */
+            --border-accent: #A569BD; /* 旗幟下方的細線顏色 */
+            --button-border: #4A148C; /* 返回按鈕邊框顏色 */
+            --dark-footer: #311B92; /* 深紫藍頁尾 */
+            
+            /* 卡片 Icon 顏色（紫羅蘭） */
+            --card-icon-color: var(--bs-primary);
+        }
+
+        /* 🖋️ 字體設定 */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bs-light-bg); 
+        }
+        h1, h3, h5, .creative-title-container *, .sub-text-under-banner {
+            font-family: 'Fredoka', sans-serif; 
+            font-weight: 700;
+        }
+
+        /* 🏞️ 頁面標頭區塊 (Header) */
+        .page-header { 
+            background: linear-gradient(135deg, var(--bs-light-bg) 0%, #D1C4E9 100%); 
+            padding: 50px 0; 
+            margin-bottom: 30px; 
+            border-bottom: none; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 250px; 
+            position: relative; 
+            flex-direction: column; 
+        }
+        .page-header .container {
+             display: flex;
+             flex-direction: column; 
+             align-items: center; 
+             justify-content: center; 
+             width: 100%; 
+        }
+        .page-header h1, .page-header p { 
+            display: none !important;
+        }
+
+        /* ================================================= */
+        /* 🏆 創意標題樣式 (旗幟 - 紫色) */
+        /* ================================================= */
+
+        .creative-title-container {
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0; 
+            margin-bottom: 5px; 
+            z-index: 10; 
+        }
+        .main-title-banner {
+            background-color: var(--banner-main); 
+            color: var(--text-light);
+            padding: 20px 50px; 
+            font-size: 3rem; 
+            line-height: 1.2;
+            position: relative;
+            z-index: 2; 
+            clip-path: polygon(0 0, 5% 50%, 0 100%, 100% 100%, 95% 50%, 100% 0);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+        }
+        .main-title-banner i {
+            font-size: 2.5rem; 
+            vertical-align: middle; 
+            margin-right: 15px;
+        }
+        .main-title-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; 
+            left: 5%; 
+            right: 5%; 
+            height: 5px;
+            background-color: var(--border-accent); 
+            z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 97% 100%, 3% 100%); 
+        }
+        .sub-text-under-banner {
+            color: var(--banner-sub-text-color); 
+            font-size: 1.5rem;
+            margin-top: 10px; 
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); 
+        }
+        
+        /* --- 按鈕群組 (在標題下方) --- */
+        .button-group-under-title {
+            margin-top: 25px; 
+        }
+
+        /* ➡️ 返回按鈕樣式 (深靛藍邊框/白色背景) */
+        .btn-outline-primary {
+            color: var(--button-border);
+            border-color: var(--button-border);
+            background-color: white; 
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--button-border);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.03); 
+        }
+        
+        /* ================================================= */
+        /* 📜 規則卡片樣式 (保留使用者排版與微調配色) */
+        /* ================================================= */
+
+        /* 內容卡片樣式 - 保留了排版、圓角、陰影和 hover 效果 */
+        .rule-card {
+            border: none;
+            border-radius: 15px;
+            /* 使用紫色調陰影 */
+            box-shadow: 0 10px 20px rgba(123, 67, 151, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%; 
+        }
+        .rule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(123, 67, 151, 0.3);
+        }
+
+        /* Icon 方塊 - 顏色調整為主題色紫羅蘭 */
+        .icon-square {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.5rem;
+            border-radius: 0.75rem;
+            background-color: var(--card-icon-color); /* 替換為紫羅蘭 */
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .text-primary { color: var(--bs-primary) !important; }
+
+        /* 頁尾 */
+        .bg-dark {
+            background-color: var(--dark-footer) !important; 
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid page-header">
+        <div class="container text-center">
+            
+            <div class="creative-title-container">
+                <div class="main-title-banner">
+                    <i class="bi bi-shield-fill-check me-2"></i>社交安全與行為指引
+                </div>
+            </div>
+            
+            <div class="sub-text-under-banner">確保人與毛孩都能享受安全、友善的互動體驗</div>
+            
+<div class="button-group-under-title">
+    <a href="{{ url_for('show_main_map') }}" class="btn btn-outline-primary btn-sm mt-3">
+        <i class="bi bi-arrow-left me-2"></i>返回地圖首頁
+    </a>
+</div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10 text-center">
+                <h2 class="text-primary mb-4 fw-bold">線下見面黃金法則</h2>
+                <p class="lead text-muted">為了確保每一次的社交活動都是正面的，請務必遵守以下幾點關鍵準則：</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            
+            <div class="col-lg-6 col-xl-3">
+                <div class="card rule-card p-4">
+                    <div class="icon-square"><i class="bi bi-chat-dots-fill"></i></div>
+                    <h5 class="card-title fw-bold">溝通準備：完整履歷</h5>
+                    <p class="card-text text-muted small">在 App 上再次確認對方的寵物數位護照，特別是疫苗證明和健康備註。準備好零食、水和緊急聯絡卡。</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-xl-3">
+                <div class="card rule-card p-4">
+                    <div class="icon-square"><i class="bi bi-geo-alt-fill"></i></div>
+                    <h5 class="card-title fw-bold">環境優先：全程受控</h5>
+                     <p class="card-text text-muted small">選擇寬敞且無外界干擾的中立公共場所。在任何時候都應保持牽繩在手，或處於安全圍欄內，確保 100% 可控性。</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-xl-3">
+                <div class="card rule-card p-4">
+                    <div class="icon-square"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                    <h5 class="card-title fw-bold">即時判讀：果斷喊停</h5>
+                     <p class="card-text text-muted small">專注觀察毛孩的耳朵、尾巴、舔嘴等微妙肢體語言。只要出現緊張、閃躲、發出低吼等負面訊號，應立即拉開距離並安全地中止互動。</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-xl-3">
+                <div class="card rule-card p-4">
+                    <div class="icon-square"><i class="bi bi-hand-thumbs-up-fill"></i></div>
+                    <h5 class="card-title fw-bold">互動禮儀：尊重對方</h5>
+                     <p class="card-text text-muted small">在任何情況下，除非飼主明確允許並指導，否則請勿隨意觸摸或餵食不熟悉的毛孩。這包括不要從頭頂或後方靠近。</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="container-fluid py-4 mt-5 bg-dark">
+        <div class="container text-center">
+            <p class="mb-0 small">&copy; <span class="text-white fw-bold">毛孩交友天地</span>. All Rights Reserved. | <a class="text-white-50" href="#">隱私權政策</a></p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

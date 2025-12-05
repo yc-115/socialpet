@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>🎉 檔案建立成功！</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">   
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        /* 🎨 全域/變數定義 - 藍綠冷色系 */
+        :root {
+            --primary-blue: #00A8E8; /* 寶石藍 */
+            --success-green: #00C9A7; /* 薄荷綠 */
+            --bg-light: #E3F2FD; /* 淺天空藍背景 */
+            --card-shadow: rgba(0, 168, 232, 0.4);
+        }
+
+        /* Keyframes for simple scale-in animation */
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 🖋️ 字體設定 */
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+        }
+        h1, h3 {
+            font-family: 'Fredoka', sans-serif; 
+            font-weight: 700;
+        }
+
+        /* 📄 內容卡片優化 */
+        .success-card { 
+            max-width: 500px; /* 縮小最大寬度 (原 600px) */
+            margin: 70px auto; /* 縮小上方間距 (原 80px) */
+            padding: 40px 30px; /* 略為縮小垂直內邊距 */
+            background-color: #fff;
+            border-radius: 20px; 
+            box-shadow: 0 15px 40px var(--card-shadow);
+            border-left: 8px solid var(--success-green); 
+            
+            /* 應用動畫 */
+            opacity: 0;
+            animation: scaleIn 0.5s ease-out forwards;
+        }
+        
+        /* 標題/文字調整 */
+        .success-card h1 {
+            color: var(--success-green); 
+            font-size: 2.5rem; /* 縮小 H1 字體 (原 3rem) */
+        }
+        .success-card h3 {
+            color: var(--primary-blue);
+            font-size: 1.6rem; /* 縮小 H3 字體 (原 1.8rem) */
+            margin-bottom: 20px !important;
+        }
+
+        /* 圖片樣式 */
+        .pet-image { 
+            max-width: 100%; 
+            max-height: 240px; /* 縮小圖片最大高度 (原 280px) */
+            object-fit: cover;
+            border-radius: 12px; 
+            margin-bottom: 20px;
+            border: 4px solid #f0f0f0; 
+        }
+        
+        /* 內文調整 */
+        .lead {
+             font-size: 1rem; /* 確保內文縮小 */
+        }
+
+        /* 按鈕樣式 */
+        .btn-primary.btn-lg {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 12px 0; /* 縮小按鈕高度 (原 15px) */
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .btn-primary.btn-lg:hover {
+            background-color: #008EC9; 
+            border-color: #008EC9;
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 警示框 */
+        .alert-warning {
+             background-color: #fff3cd;
+             border-color: #ffeeba;
+             color: #856404;
+             border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card success-card text-center">
+        <h1>
+            <i class="bi bi-check-circle-fill me-2"></i> 上傳成功！
+        </h1>
+        <h3 class="mb-4">恭喜您，{{ pet_name }} 的檔案已建立！</h3>
+
+        {% if image_url %}
+        <img src="{{ image_url }}" alt="{{ pet_name }} 的毛孩照片" class="pet-image mx-auto">
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> 圖片載入中，請稍後。
+        </div>
+        {% endif %}
+
+        <p class="lead text-muted mt-3">
+            您的毛孩檔案已經成功加入社交地圖，快去地圖上尋找您的新朋友吧！
+        </p>
+        
+        {% if pet_id %}
+        <a href="{{ url_for('show_pet_passport', pet_id=pet_id) }}" class="btn btn-success btn-lg mt-4 mb-3 w-100">
+            <i class="bi bi-journal-check me-2"></i> 查看 {{ pet_name }} 的數位護照
+        </a>
+        {% endif %}
+        
+        <a href="{{ url_for('show_main_map') }}" class="btn btn-outline-primary btn-lg w-100">
+            <i class="bi bi-map me-2"></i> 返回地圖主頁
+        </a>
+    </div>
+
+</body>
+</html>
