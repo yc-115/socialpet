@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>🚨 毛孩回家情報站 - 走失寵物協尋中心 🐾</title>
+    <meta content="即時發布走失啟事，並提供協尋線索的資訊中心" name="description">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Noto+Sans+TC:wght@400;700&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        /* 🎨 全域/變數定義 - 緊急紅/橙色主題 */
+        :root {
+            /* 品牌核心色 (紅色主題) */
+            --bs-primary: #D32F2F; /* 核心色：緊急紅色 */
+            --bs-primary-rgb: 211, 47, 47;
+            --bs-secondary: #FF9800; /* 次要色：警示橙色 */
+            --bs-light-bg: #F9F9F9; /* 極淺背景 */
+            
+            /* 旗幟配色 */
+            --banner-main: var(--bs-primary); 
+            --banner-sub-text-color: #A31F1F; /* 深紅 */
+            --text-light: #FFFFFF;
+
+            /* 輔助顏色 */
+            --border-accent: #E57373; /* 旗幟下方的細線顏色 */
+            --button-border: #FF9800; /* 返回按鈕邊框顏色 */
+            --dark-footer: #424242; /* 深灰頁尾 */
+            --highlight-green: #00796b; /* 留言區的綠色保持不變，代表「安全/找到」的希望 */
+        }
+        
+        /* Keyframes for animations (保持不變) */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseNewMessage {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+        @keyframes highlightNew {
+            0% { background-color: #fff3e0; }
+            100% { background-color: #ffffff; }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* 🖋️ 字體設定 */
+        body {
+            background-color: var(--bs-light-bg);
+            font-family: 'Noto Sans TC', 'Poppins', sans-serif;
+            color: #333;
+        }
+        h1, h3, h5, .creative-title-container *, .sub-text-under-banner {
+            font-family: 'Fredoka', 'Chakra Petch', sans-serif; 
+            font-weight: 700;
+        }
+
+        /* 🏞️ 頁面標頭區塊 (Header) */
+        .page-header { 
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCCBC 100%); 
+            padding: 50px 0; 
+            margin-bottom: 30px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 1s ease-out;
+            border-bottom: none;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 250px; 
+            position: relative; 
+            flex-direction: column; 
+        }
+        .page-header .container {
+             display: flex;
+             flex-direction: column; 
+             align-items: center; 
+             justify-content: center; 
+             width: 100%; 
+        }
+        .page-header h1, .page-header p { 
+            display: none !important;
+        }
+
+        /* ================================================= */
+        /* 🏆 創意標題樣式 (旗幟 - 紅色) */
+        /* ================================================= */
+
+        .creative-title-container {
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0; 
+            margin-bottom: 5px; 
+            z-index: 10; 
+        }
+        .main-title-banner {
+            background-color: var(--banner-main); 
+            color: var(--text-light);
+            padding: 20px 50px; 
+            font-size: 3rem; 
+            line-height: 1.2;
+            position: relative;
+            z-index: 2; 
+            clip-path: polygon(0 0, 5% 50%, 0 100%, 100% 100%, 95% 50%, 100% 0);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+        }
+        .main-title-banner i {
+            font-size: 2.5rem; 
+            vertical-align: middle; 
+            margin-right: 15px;
+        }
+        .main-title-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; 
+            left: 5%; 
+            right: 5%; 
+            height: 5px;
+            background-color: var(--border-accent); 
+            z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 97% 100%, 3% 100%); 
+        }
+        .sub-text-under-banner {
+            color: var(--banner-sub-text-color); 
+            font-size: 1.5rem;
+            margin-top: 10px; 
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); 
+        }
+        
+        /* --- 按鈕群組 (在標題下方) --- */
+        .button-group-under-title {
+            margin-top: 25px; 
+        }
+        .btn-outline-primary {
+            color: var(--bs-secondary); 
+            border-color: var(--bs-secondary);
+            background-color: white; 
+            padding: 0.5rem 1rem; 
+            font-weight: 600;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--bs-secondary);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.03); 
+        }
+        
+        /* ================================================= */
+        /* 內容區塊樣式 (與新主題色同步) */
+        /* ================================================= */
+
+        /* 內容卡片通用樣式 */
+        .content-card { 
+            padding: 40px;
+            border-left: 5px solid var(--bs-secondary); 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            animation: fadeIn 1.2s ease-out 0.2s forwards;
+            /* 強制讓圖片卡片可以點擊 */
+            cursor: pointer; 
+        }
+
+        /* 走失寵物列表樣式 */
+        .pet-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .pet-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .pet-card .badge-urgent {
+            background-color: var(--bs-primary) !important; 
+            animation: pulseNewMessage 1.5s infinite;
+        }
+        .pet-card .card-title {
+             color: var(--bs-primary); 
+        }
+
+        /* 導航列樣式 */
+        .app-nav {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0; /* 調整邊框顏色 */
+        }
+        .nav-link {
+            color: #6c757d; /* 非活躍標籤文字顏色 */
+            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--bs-primary) !important; /* hover 時文字變紅色 */
+            border-bottom: 3px solid var(--bs-primary); /* hover 時顯示底部紅色邊框 */
+        }
+        .nav-link.active {
+            background-color: var(--bs-primary) !important; /* 活躍標籤背景色為紅色 */
+            color: var(--text-light) !important; /* 活躍標籤文字顏色為白色 */
+            border-bottom: 3px solid var(--bs-primary); /* 活躍標籤底部邊框為紅色 */
+            border-radius: 8px 8px 0 0; /* 圓角效果 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 增加陰影 */
+        }
+        
+        /* 表單樣式 */
+        #newPostForm .form-label {
+            font-weight: 700;
+            color: var(--highlight-green); 
+        }
+        #newPostForm input[type="file"] {
+            border: 1px dashed #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .btn-success {
+            background-color: var(--bs-secondary); 
+            border-color: var(--bs-secondary);
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background-color: #f57c00;
+            border-color: #f57c00;
+            transform: scale(1.03);
+        }
+
+        /* 留言區細節樣式 */
+        .message-entry {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .message-entry.owner-reply {
+            border-left: 5px solid #1976d2 !important; 
+            background-color: #e3f2fd !important;
+        }
+        .message-header {
+            font-weight: 700;
+            color: var(--highlight-green); 
+            margin-bottom: 5px;
+            border-bottom: 1px dashed #cfd8dc;
+            padding-bottom: 5px;
+        }
+        .message-entry .badge.bg-success {
+             background-color: var(--highlight-green) !important;
+        }
+        
+        /* 頁尾 */
+        .bg-dark {
+             background-color: var(--dark-footer) !important; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid page-header">
+        <div class="container text-center">
+            
+            <div class="creative-title-container">
+                <div class="main-title-banner">
+                    <i class="bi bi-bullhorn-fill me-2"></i>浪浪回家情報站
+                </div>
+            </div>
+            
+            <div class="sub-text-under-banner">即時線索彙整！每一份愛心，都是牠回家的路</div>
+            
+<div class="button-group-under-title">
+    <a href="{{ url_for('show_main_map') }}" class="btn btn-outline-primary btn-sm mt-3">
+        <i class="bi bi-arrow-left me-2"></i>返回地圖首頁
+    </a>
+</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-pills app-nav justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" id="list-tab" data-target="list-view" href="#"><i class="bi bi-list-columns-reverse me-2"></i>走失寵物列表</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="post-tab" data-target="post-view" href="#"><i class="bi bi-megaphone-fill me-2"></i>發布走失啟事</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="container py-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <div id="list-view" class="view-section">
+                    <h2 class="text-dark mb-4"><i class="bi bi-search me-2"></i>最新失蹤報告</h2>
+                    <div class="row" id="petListContainer">
+                        </div>
+                </div>
+
+                <div id="post-view" class="view-section" style="display: none;">
+                    <div class="bg-white rounded content-card">
+                        <h2 class="text-danger mb-4"><i class="bi bi-clipboard-pulse me-2"></i>填寫走失啟事</h2>
+                        <form id="newPostForm" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="petName" class="form-label">寵物名稱/暱稱</label>
+                                <input type="text" class="form-control" id="petName" name="petName" required placeholder="例如：皮皮">
+                            </div>
+                            <div class="mb-3">
+                                <label for="petSpecies" class="form-label">品種/類別</label>
+                                <input type="text" class="form-control" id="petSpecies" name="petSpecies" required placeholder="例如：柴犬、三花貓、米克斯">
+                            </div>
+                            <div class="mb-3">
+                                <label for="lostDate" class="form-label">走失時間/日期</label>
+                                <input type="datetime-local" class="form-control" id="lostDate" name="lostDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lostLocation" class="form-label">最後目擊地點 (越詳細越好)</label>
+                                <input type="text" class="form-control" id="lostLocation" name="lostLocation" required placeholder="例如：大安森林公園東側出口">
+                            </div>
+                            <div class="mb-3">
+                                <label for="petFeatures" class="form-label">關鍵特徵與個性</label>
+                                <textarea class="form-control" id="petFeatures" name="petFeatures" rows="3" required placeholder="例如：綠色項圈、個性膽小、親人但怕狗..."></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label for="petImage" class="form-label">寵物照片 (建議一張清晰近照)</label>
+                                <input type="file" class="form-control" id="petImage" name="petImage" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 py-2"><i class="bi bi-check-circle-fill me-2"></i>立即發布協尋</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="detail-view" class="view-section" style="display: none;">
+                    <button class="btn btn-outline-secondary mb-3" id="backToList"><i class="bi bi-arrow-left me-2"></i>返回寵物列表</button>
+                    <div class="bg-white rounded content-card">
+                        <div id="petDetailContent">
+                            </div>
+                        
+                        <h6>提供線索 / 留言區</h6>
+                        
+                        <div class="mb-4">
+                            <textarea id="messageInput" class="form-control mb-2" rows="3" placeholder="請留下您的發現或問題..."></textarea>
+                            <button id="postMessageBtn" class="btn btn-success"><i class="bi bi-reply-fill me-2"></i>發布線索</button>
+                        </div>
+
+                        <div id="messageList"> 
+                            </div>
+
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-dark text-white-50 py-3 mt-auto mt-5">
+        <div class="container text-center">
+            <p class="mb-0 small">&copy; 毛孩回家情報站. All Rights Reserved.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. 全域變數與初始化
+        // -------------------------------------------------------------
+        // ⭐ 從 Flask 模板接收數據 (使用 tojson 過濾器，確保數據是 JSON 格式)
+        const allPosts = {{ posts | tojson }};
+        const allMessages = {{ messages | tojson }};
+        
+        const views = {
+            'list-view': document.getElementById('list-view'),
+            'post-view': document.getElementById('post-view'),
+            'detail-view': document.getElementById('detail-view')
+        };
+        const navTabs = document.querySelectorAll('.nav-link');
+        const backButton = document.getElementById('backToList');
+        const petListContainer = document.getElementById('petListContainer');
+        const newPostForm = document.getElementById('newPostForm');
+        const detailContent = document.getElementById('petDetailContent');
+        const messageListContainer = document.getElementById('messageList');
+
+        let currentPostId = null; // 當前查看的啟事 ID
+
+        // -------------------------------------------------------------
+        // 2. 輔助函數：渲染與格式化
+        // -------------------------------------------------------------
+
+        // 格式化日期時間
+        function formatPostTime(timestamp) {
+            // 由於 Flask 後端已將時間格式化為字串 (datetime.now().strftime)，這裡直接顯示
+            // 如果需要前端處理，會更複雜，這裡只做基礎檢查
+            if (timestamp) {
+                 return timestamp;
+            }
+            return '未知時間';
+        }
+
+        // 渲染單個留言
+        function renderMessage(message) {
+            const isOwner = message.isOwnerReply;
+            const className = isOwner ? 'message-entry owner-reply' : 'message-entry';
+            const headerClass = isOwner ? 'message-header text-primary' : 'message-header';
+            const username = isOwner ? '飼主本人' : message.username;
+            
+            return `
+                <div class="${className}" style="animation: slideInRight 0.5s ease-out;">
+                    <div class="${headerClass}">
+                        ${username} <small class="text-muted">(${formatPostTime(message.postTime)})</small>
+                        ${isOwner ? '<span class="badge bg-primary ms-2">主人回覆</span>' : ''}
+                    </div>
+                    <p class="mb-0">${message.content.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+        }
+        
+        // 渲染走失啟事列表
+        function renderPetList(posts) {
+            petListContainer.innerHTML = ''; // 清空現有列表
+            
+            if (posts.length === 0) {
+                 petListContainer.innerHTML = '<p class="text-center text-muted mt-5">目前沒有走失報告，是個平安的日子！</p>';
+                 updatePetCount(0);
+                 return;
+            }
+            
+            posts.forEach(post => {
+                const featuresSnippet = post.petFeatures.substring(0, 35) + (post.petFeatures.length > 35 ? '...' : '');
+                // 找到最新的留言
+                const latestMessage = allMessages
+                    .filter(msg => msg.postId === post.id)
+                    .sort((a, b) => new Date(b.postTime) - new Date(a.postTime))[0];
+
+                const latestInfo = latestMessage 
+                    ? `最新線索：${formatPostTime(latestMessage.postTime)}` 
+                    : '最新線索：無';
+                const badgeClass = post.isResolved ? 'bg-success' : 'badge-urgent';
+                const badgeText = post.isResolved ? '已尋獲' : '緊急協尋';
+                
+                // 確保圖片路徑正確，如果沒有上傳圖片，使用預設圖片
+                const imageUrl = post.imageUrl || '{{ url_for('static', filename='img/default_pet.png') }}';
+
+                const postHtml = `
+                    <div class="col-md-6 mb-4">
+                        <div class="card pet-card" data-post-id="${post.id}">
+                            <img src="${imageUrl}" class="card-img-top" alt="${post.petName}">
+                            <div class="card-body">
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                                <h5 class="card-title">${post.petName} (${post.petSpecies})</h5>
+                                <p class="card-text small text-muted">走失時間：${post.lostDate ? formatPostTime(post.lostDate) : '未知'} | 地點：${post.lostLocation} | 特徵：${featuresSnippet}</p>
+                                <p class="mb-0 small text-success">**${latestInfo}**</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                petListContainer.insertAdjacentHTML('beforeend', postHtml);
+            });
+            
+            // 重新繫結卡片點擊事件
+            document.querySelectorAll('.pet-card').forEach(card => {
+                card.removeEventListener('click', handleCardClick);
+                card.addEventListener('click', handleCardClick);
+            });
+
+            updatePetCount(posts.length);
+        }
+        
+        // -------------------------------------------------------------
+        // 3. 頁面/數據交互邏輯
+        // -------------------------------------------------------------
+        
+        function showView(targetId) {
+            // 隱藏所有區塊
+            Object.values(views).forEach(view => {
+                if (view) view.style.display = 'none';
+            });
+            // 顯示目標區塊
+            if (views[targetId]) {
+                views[targetId].style.display = 'block';
+            }
+
+            // 更新導航列的 active 狀態
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            if (targetId === 'list-view') {
+                document.getElementById('list-tab').classList.add('active');
+            } else if (targetId === 'post-view') {
+                document.getElementById('post-tab').classList.add('active');
+            }
+        }
+        
+        // 處理卡片點擊 (進入詳情頁)
+        function handleCardClick() {
+            // 確保 post-id 是數字，因為後端用的是 int
+            currentPostId = parseInt(this.getAttribute('data-post-id') || this.getAttribute('data-pet-id')); 
+            const post = allPosts.find(p => p.id === currentPostId);
+            
+            if (!post) {
+                alert("找不到該啟事資料！");
+                return;
+            }
+
+            // 渲染詳情內容
+            detailContent.innerHTML = `
+                <div style="animation: fadeIn 1s ease-out;">
+                    <img src="${post.imageUrl || '{{ url_for('static', filename='img/default_pet.png') }}'}" class="img-fluid rounded mb-3" alt="${post.petName}" style="max-height: 400px; object-fit: cover; width: 100%;">
+                    <h5>🚨 協尋啟事：${post.petName} (${post.petSpecies})</h5>
+                    <p><strong>走失時間：</strong> ${formatPostTime(post.lostDate)}</p>
+                    <p><strong>最後地點：</strong> ${post.lostLocation}</p>
+                    <p><strong>關鍵特徵：</strong> ${post.petFeatures.replace(/\n/g, '<br>')}</p>
+                </div>
+                <hr>
+            `;
+            
+            // 渲染留言列表 (過濾並排序)
+            const filteredMessages = allMessages
+                .filter(msg => msg.postId === currentPostId)
+                .sort((a, b) => new Date(b.postTime) - new Date(a.postTime)); // 降序排列 (最新在前)
+                
+            messageListContainer.innerHTML = filteredMessages.map(renderMessage).join('');
+
+            showView('detail-view');
+        }
+
+        // -------------------------------------------------------------
+        // 4. AJAX 提交邏輯 (核心修改)
+        // -------------------------------------------------------------
+        
+        // 4.1 處理走失啟事發布 (使用 FormData 處理檔案上傳)
+        newPostForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            const formData = new FormData(this);
+            
+            fetch('{{ url_for("handle_pet_post") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 將新數據加入全域變數，並重新渲染列表
+                    allPosts.unshift(data.post_data);
+                    // 重新渲染整個列表以顯示最新的貼文
+                    renderPetList(allPosts);
+                    
+                    this.reset();
+                    alert(`走失啟事【${data.post_data.petName}】已成功發布！`);
+                    showView('list-view');
+                } else {
+                    alert('發布失敗: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('網路連線錯誤，發布失敗。請檢查圖片檔案大小或格式。');
+            });
+        });
+
+        // 4.2 處理留言線索發布 (使用 JSON 處理文字留言)
+        document.getElementById('postMessageBtn').addEventListener('click', function() {
+            const inputElement = document.getElementById('messageInput');
+            const messageContent = inputElement.value.trim();
+
+            if (messageContent === "" || currentPostId === null) {
+                alert("請輸入線索內容並確保已選定協尋啟事！");
+                return;
+            }
+            
+            const messagePayload = {
+                'postId': currentPostId,
+                'content': messageContent,
+                'username': '熱心網友' // 預設使用者名稱
+            };
+            
+            fetch('{{ url_for("handle_message_post") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messagePayload),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 將新數據加入全域變數
+                    allMessages.unshift(data.message_data);
+                    
+                    // 清空輸入框
+                    inputElement.value = "";
+                    
+                    // 重新渲染留言列表 (直接呼叫詳情頁面的渲染邏輯)
+                    // 必須找到當前卡片的 DOM 元素，這裡稍微繞個路確保 data-post-id 正確
+                    const currentCard = document.querySelector(`.pet-card[data-post-id="${currentPostId}"]`);
+                    if (currentCard) {
+                        handleCardClick.call(currentCard);
+                    }
+                    
+                    alert('線索已發布，感謝您的幫助！');
+                } else {
+                    alert('留言發布失敗: ' + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('網路連線錯誤，留言失敗。');
+            });
+        });
+
+        // -------------------------------------------------------------
+        // 5. 事件綁定與啟動
+        // -------------------------------------------------------------
+        
+        // 導航列點擊事件 (保留原有邏輯，但移除靜態卡片事件)
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                showView(targetId);
+            });
+        });
+
+        // 返回列表按鈕事件
+        backButton.addEventListener('click', function() {
+            showView('list-view');
+        });
+
+        // 頁面啟動時：渲染初始列表
+        document.addEventListener('DOMContentLoaded', () => {
+            // 由於靜態卡片已移除，這裡調用 renderPetList
+            renderPetList(allPosts);
+        });
+
+        // 更新列表數量
+        function updatePetCount(count) {
+            const listTab = document.getElementById('list-tab');
+            if (listTab) {
+                const iconHtml = '<i class="bi bi-list-columns-reverse me-2"></i>';
+                listTab.innerHTML = `${iconHtml}走失寵物列表 (${count})`;
+            }
+        }
+    </script>
+</body>
+</html>

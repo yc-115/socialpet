@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>💙 毛孩交友基地 - 上傳毛孩與地點 🐾</title>
+    <meta content="毛孩社交地圖輔助頁面" name="description">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 	
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        /* 🎨 全域/變數定義 - 冷色系 (藍色主題) */
+        :root {
+            --primary-color: #00A8E8; /* 湖水藍/寶石藍 - 主要強調色 */
+            --secondary-color: #00C9A7; /* 薄荷綠 - 次要強調色/Icon色 */
+            --bg-light: #E3F2FD; /* 極淺天空藍 - 全域背景 */
+            --form-bg: #FFFFFF;
+            --section-bg: #F4FBFF; /* 淺灰藍/雪白用於區塊背景 */
+            /* 旗幟顏色變數 */
+            --banner-main: #00A8E8; 
+            --banner-sub-text-color: #12638F; 
+            --text-light: #FFFFFF;
+            --text-dark: #34495e;
+            /* 參考圖中的額外顏色 */
+            --border-green: #2ecc71; 
+            --button-border-green: #27ae60; 
+        }
+
+        /* 🖋️ 字體設定 */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light); 
+        }
+        h1, h3, h5, .creative-title-container *, .sub-text-under-banner {
+            font-family: 'Fredoka', sans-serif; 
+            font-weight: 700;
+        }
+
+        /* 🏞️ 標頭區塊 (Header) */
+        .page-header { 
+            /* 調整背景色和漸層，使其更接近參考圖的柔和感 */
+            background: linear-gradient(135deg, #E0F7FA 0%, #A8DADC 100%); 
+            padding: 50px 0; 
+            margin-bottom: 30px; 
+            border-bottom: none; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 250px; 
+            position: relative; 
+            flex-direction: column; 
+        }
+        .page-header .container {
+             display: flex;
+             flex-direction: column; 
+             align-items: center; 
+             justify-content: center; 
+             width: 100%; 
+        }
+        .page-header p.text-dark.fs-5 { 
+            display: none;
+        }
+
+        /* ================================================= */
+        /* 🏆 創意標題樣式 (旗幟) */
+        /* ================================================= */
+        .creative-title-container {
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0; 
+            margin-bottom: 5px; 
+            z-index: 10; 
+        }
+        .main-title-banner {
+            background-color: var(--banner-main);
+            color: var(--text-light);
+            padding: 20px 50px; 
+            font-size: 3rem; 
+            line-height: 1.2;
+            position: relative;
+            z-index: 2; 
+            clip-path: polygon(0 0, 5% 50%, 0 100%, 100% 100%, 95% 50%, 100% 0);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+        }
+        .main-title-banner i {
+            font-size: 2.5rem; 
+            vertical-align: middle; 
+            margin-right: 15px;
+        }
+        .main-title-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; 
+            left: 5%; 
+            right: 5%; 
+            height: 5px;
+            background-color: var(--border-green);
+            z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 97% 100%, 3% 100%); 
+        }
+        .sub-text-under-banner {
+            color: var(--banner-sub-text-color); 
+            font-size: 1.5rem;
+            margin-top: 10px; 
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); 
+        }
+        
+        /* 響應式調整 */
+        @media (max-width: 992px) {
+            .main-title-banner { font-size: 2.5rem; padding: 15px 30px; clip-path: polygon(0 0, 5% 50%, 0 100%, 95% 100%, 100% 50%, 95% 0); }
+            .main-title-banner i { font-size: 2rem; margin-right: 10px; }
+            .sub-text-under-banner { font-size: 1.2rem; margin-top: 8px; }
+        }
+        @media (max-width: 768px) {
+            .main-title-banner { font-size: 2rem; padding: 12px 25px; }
+            .main-title-banner i { font-size: 1.8rem; margin-right: 8px; }
+            .sub-text-under-banner { font-size: 1rem; margin-top: 5px; }
+        }
+
+        /* ➡️ 返回地圖按鈕 (在標題下方) */
+        .page-header .btn-outline-primary {
+            position: static; 
+            margin-top: 20px !important; 
+            transform: none; 
+            width: auto;
+            color: var(--button-border-green);
+            border-color: var(--button-border-green);
+            background-color: white; 
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease;
+            z-index: 15; 
+        }
+        .page-header .btn-outline-primary:hover {
+            background-color: var(--button-border-green);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.03); 
+        }
+
+
+        /* 📄 內容卡片 (Form Card) */
+        .content-card { 
+            padding: 30px; 
+            border-radius: 15px; 
+            background-color: var(--form-bg);
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.2); 
+            min-height: 400px; 
+        }
+        .content-card h3 {
+            color: var(--primary-color);
+            border-bottom: 3px dashed var(--bg-light);
+            padding-bottom: 10px;
+        }
+
+        /* 📋 表單區塊 */
+        .border.rounded.bg-light {
+            background-color: var(--section-bg) !important; 
+            border: 1px solid #BEE3F8 !important; 
+            border-radius: 10px !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .text-secondary {
+            color: var(--secondary-color) !important; 
+        }
+        .form-label {
+            font-weight: 600 !important;
+        }
+
+        /* 🌟 提交按鈕 */
+        .btn-primary.btn-lg {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 15px 0;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .btn-primary.btn-lg:hover {
+            background-color: #008EC9; 
+            border-color: #008EC9;
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 168, 232, 0.4); 
+        }
+
+        /* 🦶 頁尾 */
+        .bg-dark {
+            background-color: #0D47A1 !important; 
+            color: #fff !important;
+        }
+
+        /* 地圖容器樣式 (新增) */
+        #mapid {
+            height: 300px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* 針對地圖文字欄位設為只讀的樣式 */
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid page-header">
+        <div class="container text-center">
+            
+            <div class="creative-title-container">
+                <div class="main-title-banner">
+                    <i class="bi bi-person-bounding-box"></i>毛孩檔案建立
+                </div>
+            </div>
+            
+            <div class="sub-text-under-banner">上傳您的毛孩與地點</div>
+            
+            <a href="{{ url_for('show_main_map') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-map me-2"></i>返回地圖首頁
+            </a>
+            
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="rounded content-card">
+                    <h3 class="mb-4 text-primary"><i class="bi bi-file-earmark-person me-2"></i>填寫交友資訊</h3>
+                    <p class="mb-4 text-muted">請填寫以下資訊，讓您的毛孩進入交友地圖，一起來結交新朋友吧！</p>
+                    
+                    <form action="{{ url_for('handle_upload') }}" method="POST" enctype="multipart/form-data"> 
+                        
+                        <div class="row mb-4 p-4 border rounded bg-light">
+                            <h5 class="text-secondary mb-3">區塊一：基本檔案</h5>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="petImage" class="form-label fw-bold">1. 毛孩照片 *</label>
+                                <input class="form-control" type="file" id="petImage" name="petImage" accept="image/*" required>
+                                <div class="form-text">上傳一張可愛的正面清晰照。</div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <label for="petName" class="form-label">2. 名字 *</label>
+                                        <input type="text" class="form-control" id="petName" name="petName" placeholder="例如：樂樂 (Lele)" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="petSpecies" class="form-label">3. 物種 *</label>
+                                        <select class="form-select" id="petSpecies" name="petSpecies" required>
+                                            <option value="">請選擇</option>
+                                            <option value="dog">狗 (Dog)</option>
+                                            <option value="cat">貓 (Cat)</option>
+                                            <option value="other">其他</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="petAge" class="form-label">4. 年齡 (歲) *</label>
+                                        <input type="number" class="form-control" id="petAge" name="petAge" min="0" max="30" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-4 border rounded">
+                            <h5 class="text-secondary mb-3">區塊二：個性與行為標籤</h5>
+                            <label class="form-label fw-bold mb-2">5. 個性標籤 (可複選)</label>
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="active" id="tagActive" name="tags">
+                                        <label class="form-check-label" for="tagActive">🏃 活潑好動</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="shy" id="tagShy" name="tags">
+                                        <label class="form-check-label" for="tagShy">😌 慢熟怕生</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="dogFriendly" id="tagDogFriendly" name="tags">
+                                        <label class="form-check-label" for="tagDogFriendly">🐕 對狗友善</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="catFriendly" id="tagCatFriendly" name="tags">
+                                        <label class="form-check-label" for="tagCatFriendly">🐈 對貓友善</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="other" id="tagOther" name="tags" onchange="toggleOtherTagsInput()">
+                                        <label class="form-check-label" for="tagOther">➕ 其他 (請輸入)</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-3" id="otherTagsInputContainer" style="display: none;">
+                                    <label for="otherTagsText" class="form-label small">請輸入其他個性標籤 (以逗號分隔)</label>
+                                    <input type="text" class="form-control form-control-sm" id="otherTagsText" name="otherTagsText" placeholder="例如：愛吃零食, 怕水, 喜歡玩球">
+                                </div>
+                                
+                                <div class="col-12 mt-3">
+                                    <div class="form-text">這些標籤有助於其他飼主了解您的毛孩是否適合一起玩。</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-4 border rounded bg-light">
+                            <h5 class="text-secondary mb-3">區塊三：活動地點</h5>
+                            
+                            <div id="mapid"></div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label fw-bold">6. 最常活動地點 (點擊地圖標記) *</label>
+                                <input type="text" class="form-control" id="location" name="location" placeholder="請在地圖上點擊或拖曳標記，以確定地點" required readonly>
+                                <div class="form-text">請在地圖上精確點擊您的毛孩常出沒的地點，地圖標記將自動抓取經緯度。</div>
+                            </div>
+
+                            <input type="hidden" id="lat" name="lat" required>
+                            <input type="hidden" id="lon" name="lon" required>
+                            
+                            <div class="mb-3">
+                                <label for="interactionNote" class="form-label fw-bold">7. 互動備註</label>
+                                <textarea class="form-control" id="interactionNote" name="interactionNote" rows="3" placeholder="例如：喜歡被摸耳朵；看到自行車會興奮地叫；不喜歡被摸尾巴。"></textarea>
+                                <div class="form-text">請提供重要的互動提示，確保安全與愉快的體驗。</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-4 border rounded bg-light">
+                            <h5 class="text-secondary mb-3">區塊四：專業醫療紀錄</h5>
+    
+                            <div class="mb-3">
+                                <label for="medicalRecord" class="form-label fw-bold">8. 醫療紀錄文件 (非必填)</label>
+                                <input class="form-control" type="file" id="medicalRecord" name="medicalRecord" accept=".pdf,image/*,.doc,.docx" multiple>
+                            <div class="form-text">可上傳疫苗手冊、健康檢查報告或過敏紀錄等，格式支援圖片/PDF/Word。</div>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="healthNote" class="form-label fw-bold">9. 簡要健康狀況備註</label>
+                            <textarea class="form-control" id="healthNote" name="healthNote" rows="2" placeholder="例如：已結紮；對花生過敏；有輕微關節炎，不宜激烈跑跳。"></textarea>
+                            <div class="form-text">公開顯示的簡要健康資訊，增加互動安全性。</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i>提交檔案並加入地圖！
+                        </button>
+                        
+                    </form> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-3 mt-auto bg-dark">
+        <div class="container text-center">
+            <p class="mb-0 small">&copy; 🐾 毛孩交友基地. All Rights Reserved.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <script>
+        // --- 區塊二：其他標籤控制 ---
+        function toggleOtherTagsInput() {
+            const otherCheckbox = document.getElementById('tagOther');
+            const otherInputContainer = document.getElementById('otherTagsInputContainer');
+            
+            if (otherCheckbox.checked) {
+                otherInputContainer.style.display = 'block';
+            } else {
+                otherInputContainer.style.display = 'none';
+                document.getElementById('otherTagsText').value = ''; 
+            }
+        }
+
+        // --- 區塊三：地圖點擊控制 ---
+        
+        // 預設中心：台北市中心 (經緯度)
+        const initialLat = 25.0330; 
+        const initialLon = 121.5654; 
+
+        // 初始化地圖並設定視圖中心
+        const map = L.map('mapid').setView([initialLat, initialLon], 13);
+
+        // 使用 OpenStreetMap 圖層
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // 初始化一個可拖曳的標記
+        let marker = L.marker([initialLat, initialLon], {
+            draggable: true
+        }).addTo(map);
+
+        // 預先填充經緯度，以滿足表單 required 屬性
+        document.getElementById('lat').value = initialLat.toFixed(6);
+        document.getElementById('lon').value = initialLon.toFixed(6);
+        document.getElementById('location').value = "初始預設位置：台北市中心";
+
+
+        function updateLocationFields(lat, lon) {
+            // 更新隱藏的經緯度欄位
+            document.getElementById('lat').value = lat.toFixed(6);
+            document.getElementById('lon').value = lon.toFixed(6);
+            
+            // 更新地圖下方的文字顯示
+            document.getElementById('location').value = `已選定：緯度 ${lat.toFixed(4)}, 經度 ${lon.toFixed(4)} (點擊或拖曳變更)`;
+        }
+
+        // 1. 處理地圖點擊事件
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            
+            // 移動標記到點擊的位置
+            marker.setLatLng([lat, lng]);
+            
+            updateLocationFields(lat, lng);
+        });
+
+        // 2. 處理標記拖曳結束事件
+        marker.on('dragend', function(e) {
+            const { lat, lng } = e.target.getLatLng();
+            updateLocationFields(lat, lng);
+        });
+    </script>
+</body>
+</html>

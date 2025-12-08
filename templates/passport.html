@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>💚 寵物數位護照 🐾</title>
+    <meta content="毛孩社交地圖輔助頁面" name="description">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        /* 🎨 全域/變數定義 - 綠色冷色系主題 (寵物護照頁面) */
+        :root {
+            /* 品牌核心色 (綠色主題) */
+            --bs-primary: #00C9A7; /* 核心色：薄荷綠/青色 */
+            --bs-primary-rgb: 0, 201, 167;
+            --bs-secondary: #2ecc71; /* 次要安全綠色 */
+            --bs-light-bg: #E8F8F5; /* 淺薄荷綠背景 */
+            
+            /* 旗幟配色 */
+            --banner-main: var(--bs-primary); 
+            --banner-sub-text-color: #0B5345; /* 深松綠 */
+            --text-light: #FFFFFF;
+
+            /* 輔助顏色 */
+            --border-green: #008779; /* 旗幟下方的細線顏色變深 */
+            --button-border-green: #2ecc71; /* 返回按鈕邊框用翡翠綠 */
+            --dark-footer: #004D40; /* 深松綠頁尾 */
+        }
+
+        /* 🖋️ 字體設定 */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bs-light-bg); 
+        }
+        h1, h3, h5, .creative-title-container *, .sub-text-under-banner {
+            font-family: 'Fredoka', sans-serif; 
+            font-weight: 700;
+        }
+
+        /* 🏞️ 頁面標頭區塊 (Header) */
+        .page-header { 
+            background: linear-gradient(135deg, var(--bs-light-bg) 0%, #B9FBC0 100%); 
+            padding: 50px 0; 
+            margin-bottom: 30px; 
+            border-bottom: none; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 250px; 
+            position: relative; 
+            flex-direction: column; 
+        }
+        .page-header .container {
+             display: flex;
+             flex-direction: column; 
+             align-items: center; 
+             justify-content: center; 
+             width: 100%; 
+        }
+
+        /* ================================================= */
+        /* 🏆 創意標題樣式 (旗幟 - 綠色) */
+        /* ================================================= */
+
+        .creative-title-container {
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0; 
+            margin-bottom: 5px; 
+            z-index: 10; 
+        }
+
+        /* --- 主標題旗幟 --- */
+        .main-title-banner {
+            background-color: var(--banner-main); /* 薄荷綠 */
+            color: var(--text-light);
+            padding: 20px 50px; 
+            font-size: 3rem; 
+            line-height: 1.2;
+            position: relative;
+            z-index: 2; 
+            clip-path: polygon(0 0, 5% 50%, 0 100%, 100% 100%, 95% 50%, 100% 0);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25); 
+        }
+        .main-title-banner i {
+            font-size: 2.5rem; 
+            vertical-align: middle; 
+            margin-right: 15px;
+        }
+        /* 旗幟下方的細線 */
+        .main-title-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; 
+            left: 5%; 
+            right: 5%; 
+            height: 5px;
+            background-color: var(--border-green); /* 綠色細線 */
+            z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 97% 100%, 3% 100%); 
+        }
+
+        /* --- 副標題文字樣式 (在旗幟下方) --- */
+        .sub-text-under-banner {
+            color: var(--banner-sub-text-color); /* 深松綠 */
+            font-size: 1.5rem;
+            margin-top: 10px; 
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); 
+        }
+        
+        /* --- 按鈕群組 (在標題下方) --- */
+        .button-group-under-title {
+            margin-top: 25px; 
+        }
+
+        /* ➡️ 返回按鈕樣式 (綠色邊框/白色背景) */
+        .btn-outline-primary {
+            color: var(--button-border-green);
+            border-color: var(--button-border-green);
+            background-color: white; 
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--button-border-green);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.03); 
+        }
+        /* 編輯按鈕樣式 (綠色實心) */
+        .btn-primary.text-white {
+             background-color: var(--bs-primary); /* 薄荷綠實心 */
+             border-color: var(--bs-primary);
+             font-weight: 600;
+             padding: 12px 25px;
+             border-radius: 10px;
+             transition: all 0.3s ease;
+        }
+        .btn-primary.text-white:hover {
+            background-color: #00A38B; /* hover 變深 */
+            border-color: #00A38B;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.03); 
+        }
+        
+
+        /* 📄 內容卡片樣式 (保持) */
+        .passport-container {
+            padding: 40px;
+            border-radius: 15px; 
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 201, 167, 0.15); /* 使用綠色調陰影 */
+        }
+        /* 區塊標題 */
+        .section-title {
+            color: var(--bs-primary); /* 薄荷綠 */
+            border-left: 4px solid var(--bs-primary); 
+            padding-left: 10px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        /* 醫療清單 */
+        .medical-list .list-group-item {
+            border-left: 3px solid #B9FBC0; /* 使用淺綠色分隔線 */
+        }
+        /* 資訊標籤 */
+        .badge.bg-secondary { 
+             background-color: var(--bs-secondary) !important; /* 翡翠綠 */
+        }
+        .badge.bg-success {
+             background-color: var(--button-border-green) !important; /* 翡翠綠 */
+        }
+        .badge.bg-primary { /* 結紮標籤，使用核心薄荷綠 */
+             background-color: var(--bs-primary) !important;
+        }
+        .badge.bg-info { /* 個性標籤，使用淺藍/青色 */
+             background-color: #20C997 !important; 
+        }
+        .passport-image {
+             width: 100%;
+             max-height: 400px;
+             object-fit: cover;
+             border-radius: 10px;
+             margin-bottom: 20px;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .list-group-item .text-danger {
+            color: #D63384 !important; /* 使用一個顯眼的粉色調來強調健康備註 */
+        }
+        /* 醫療文件連結樣式 */
+        .medical-file-link {
+            font-size: 0.9rem;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* 🦶 頁尾 */
+        .bg-dark {
+            background-color: var(--dark-footer) !important; /* 深松綠頁尾 */
+            color: #fff !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid page-header">
+        <div class="container text-center">
+            
+            <div class="creative-title-container">
+                <div class="main-title-banner">
+                    <i class="bi bi-journal-check me-2"></i>寵物數位護照
+                </div>
+            </div>
+            
+            <div class="sub-text-under-banner">紀錄毛孩健康與社交履歷</div>
+            
+            <div class="button-group-under-title">
+                <div class="d-flex justify-content-center align-items-center">
+                    
+                    {% if prev_id %}
+                    <a href="{{ url_for('show_pet_passport', pet_id=prev_id) }}" class="btn btn-outline-primary btn-sm me-3">
+                        <i class="bi bi-arrow-left me-2"></i>上一頁
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-sm me-3" disabled>
+                        <i class="bi bi-x-circle me-2"></i>已是開頭
+                    </button>
+                    {% endif %}
+
+                    <a href="{{ url_for('show_main_map') }}" class="btn btn-primary btn-sm text-white me-3">
+                        <i class="bi bi-map me-2"></i>返回地圖首頁
+                    </a>
+                    
+                    {% if next_id %}
+                    <a href="{{ url_for('show_pet_passport', pet_id=next_id) }}" class="btn btn-outline-primary btn-sm">
+                        下一頁 <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled>
+                        已是結尾 <i class="bi bi-check-circle me-2"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="passport-container">
+                    
+                    {% if pet %}
+                    
+                    <h1 class="text-center mb-4 display-4" style="color: var(--banner-sub-text-color);">
+                        {{ pet.name }} 的專屬護照
+                    </h1>
+                    
+                    <img src="{{ pet.image_url }}" alt="{{ pet.name }} 的照片" class="passport-image">
+                    
+                    <h2 class="section-title"><i class="bi bi-person-badge me-2"></i>基本身份與安全資訊</h2>
+                    <p class="lead text-muted">以下是{{ pet.name }}的專屬數位身份證。</p>
+                    
+                    <div class="mb-4">
+                        <span class="badge bg-secondary info-badge"><i class="bi bi-balloon me-1"></i>物種/品種：{{ pet.species }}</span>
+                        <span class="badge bg-secondary info-badge"><i class="bi bi-calendar me-1"></i>年齡：{{ pet.age }} 歲</span>
+                        
+                        <span class="badge bg-primary text-white info-badge"><i class="bi bi-gender-ambiguous me-1"></i>結紮狀態：否 (預留)</span>
+                    </div>
+                    
+                    <blockquote class="blockquote small text-muted border-start border-primary border-3 ps-3">
+                        <p class="mb-0">活動地點：{{ pet.location }}</p>
+                    </blockquote>
+
+
+                    <h2 class="section-title mt-5"><i class="bi bi-chat-square-text me-2"></i>個性與社交履歷</h2>
+                    <p>以下是{{ pet.name }}的個性和偏好：</p>
+                    
+                    <div class="card bg-light p-3 border-0">
+                        <p class="mb-2"><strong>互動備註：</strong> {{ pet.interactionNote or '無特別備註' }}</p>
+                        
+                        <div class="mt-2">
+                            {% for tag in pet.tags %}
+                                <span class="badge bg-info info-badge mb-1">
+                                    <i class="bi bi-tag-fill me-1"></i>{{ tag }}
+                                </span>
+                            {% endfor %}
+                            {% if not pet.tags %}
+                                <span class="text-muted">無個性標籤。</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    
+                    <h2 class="section-title mt-5"><i class="bi bi-hospital me-2"></i>專業醫療紀錄</h2>
+                    <p>此處提供{{ pet.name }}的健康狀況備註與可下載/查看的醫療紀錄。</p>
+                    
+                    <ul class="list-group medical-list list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto w-100">
+                                <div class="fw-bold text-danger"><i class="bi bi-patch-exclamation-fill me-1"></i>簡要健康狀況備註</div>
+                                {{ pet.healthNote or '無簡要健康狀況備註。' }}
+                            </div>
+                        </li>
+                        
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto w-100">
+                                <div class="fw-bold"><i class="bi bi-file-earmark-medical me-1"></i>上傳文件 (共 {{ pet.medicalRecords | length }} 筆)</div>
+                                {% if pet.medicalRecords %}
+                                    {% for record in pet.medicalRecords %}
+                                        <a href="{{ record.url }}" target="_blank" class="medical-file-link badge bg-success text-white">
+                                            {% if '.pdf' in record.filename|lower %}
+                                                <i class="bi bi-file-earmark-pdf"></i>
+                                            {% else %}
+                                                <i class="bi bi-file-earmark-text"></i>
+                                            {% endif %}
+                                            {{ record.filename }}
+                                        </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted small">無相關文件上傳。</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+
+                    {% else %}
+                    <div class="alert alert-warning text-center">
+                        <h4 class="alert-heading"><i class="bi bi-info-circle me-2"></i>目前沒有寵物護照資料</h4>
+                        <p>請先前往 <a href="{{ url_for('show_upload_form') }}" class="alert-link">上傳毛孩頁面</a> 建立新的檔案！</p>
+                        
+                        {% if error_message %}
+                        <p class="text-danger small mt-2">({{ error_message }})</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-3 mt-auto bg-dark">
+        <div class="container text-center">
+            <p class="mb-0 small">&copy; 毛孩交友天地. All Rights Reserved.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
