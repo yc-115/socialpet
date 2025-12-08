@@ -1,4 +1,4 @@
-# 🐾 毛孩交友天地 - Pet Social Universe
+# 毛孩交友天地 - Pet Social Universe
 
 ## 項目簡介 (Project Overview)
 
@@ -6,7 +6,7 @@
 
 ***
 
-## 🧑‍💻 組員資訊 (Team Information)
+## 組員資訊 (Team Information)
 
 | 職位 | 姓名 | 學號 |
 | :--- | :--- | :--- |
@@ -16,7 +16,7 @@
 
 ***
 
-## 🔗 專案資源連結 (Project Resources)
+## 專案資源連結 (Project Resources)
 
 | 資源名稱 | 連結/說明 |
 | :--- | :--- |
@@ -26,7 +26,7 @@
 
 ***
 
-## 🛠️ 技術棧與部署 (Technology & Deployment)
+## 技術棧與部署 (Technology & Deployment)
 
 ### 主要技術 (Stack)
 
