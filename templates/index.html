@@ -373,6 +373,15 @@
     <input type="text" class="form-control" id="gemini-input" placeholder="問：附近哪隻狗狗最親人？">
     <button class="btn btn-primary" type="button" onclick="sendAIQuery()">發送</button>
 </div>
+            
+            <div class="weather-container">
+                <h3 class="fs-5 text-dark"><i class="bi bi-cloud-sun me-2 text-info"></i>即時天氣查詢</h3>
+                <div class="weather-input-group">
+                    <input type="text" id="cityInput" placeholder="輸入城市名稱，例如：Taipei">
+                    <button onclick="getWeather()">查詢天氣</button>
+                </div>
+                <div id="weatherResult" class="weather-result"></div>
+            </div>
 
             <h5 class="text-uppercase text-primary my-4 pt-3 border-top border-light"><i class="bi bi-rewind me-2"></i>毛孩社交卡片</h5>
 
@@ -640,11 +649,12 @@
         // ----------------------------------------------------
         
         // AI Chat 邏輯 
-        function sendAIQuery() {
+        // AI Chat 邏輯 
+function sendAIQuery() {
     const keyInputElement = document.getElementById('gemini-api-key-input');
     const inputElement = document.getElementById('gemini-input');
     
-    const userKey = keyInputElement.value.trim(); // ⭐ 獲取使用者輸入的金鑰
+    const userKey = keyInputElement.value.trim(); // 獲取使用者輸入的金鑰
     const query = inputElement.value.trim();
     const chatHistory = document.getElementById('ai-chat-history');
     
@@ -654,39 +664,35 @@
     }
     if (!query) return;
 
-            chatHistory.innerHTML += `<div class="chat-message user-message"><strong>您:</strong> ${query}</div>`;
+    // 顯示使用者訊息
+    chatHistory.innerHTML += `<div class="chat-message user-message"><strong>您:</strong> ${query}</div>`;
     inputElement.value = '';
     chatHistory.scrollTop = chatHistory.scrollHeight;
     
-    // ⭐ 修改 fetch 請求：將 Key 和 Query 一起傳送到後端
+    // 發送請求，包含 Key 和 Query
     fetch('/ai_chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
             query: query,
-            api_key: userKey // ⭐ 傳送金鑰
+            api_key: userKey // 傳送金鑰
         })
     })
-            .then(response => response.json())
-            .then(data => {
-                // ⭐ 修正：檢查 data.response 是否存在
-                const aiResponse = data.response || "無法獲取 AI 回覆內容 (可能是後端錯誤)"; 
-                
-                chatHistory.innerHTML += `<div class="chat-message ai-message"><strong>🤖 AI:</strong> ${aiResponse}</div>`;
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-            })
-            .catch(error => {
-                chatHistory.innerHTML += `<div class="chat-message ai-message"><strong>🤖 AI:</strong> 服務連線失敗或後端錯誤。</div>`;
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-                console.error('AI fetch error:', error);
-            });
-        }
-
-        document.getElementById('gemini-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendAIQuery();
-            }
-        });
+    .then(response => response.json())
+    .then(data => {
+        // ⭐ 確保 data.response 存在，如果不存在則顯示自訂錯誤訊息
+        const aiResponse = data.response || "無法獲取 AI 回覆內容 (可能是後端錯誤)"; 
+        
+        chatHistory.innerHTML += `<div class="chat-message ai-message"><strong>🤖 AI:</strong> ${aiResponse}</div>`;
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    })
+    .catch(error => {
+        // 處理連線層面的錯誤
+        chatHistory.innerHTML += `<div class="chat-message ai-message"><strong>🤖 AI:</strong> 服務連線失敗或後端錯誤。</div>`;
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+        console.error('AI fetch error:', error);
+    });
+}
 
         // Weather 邏輯 
         async function getWeather() {
