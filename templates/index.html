@@ -360,23 +360,19 @@
         <div id="sidebar">
             
             <h5 class="ai-header"><i class="bi bi-robot me-2"></i>AI 智慧助手</h5>
-            
-            <div class="chat-container" id="ai-chat-history">
-                <div class="chat-message ai-message"><strong>🤖 AI:</strong> 歡迎！問我附近的毛孩地點或社交問題吧！</div>
-            </div>
-            <div class="input-group mb-4">
-                <input type="text" class="form-control" id="gemini-input" placeholder="問：附近哪隻狗狗最親人？">
-                <button class="btn btn-primary" type="button" onclick="sendAIQuery()">發送</button>
-            </div>
-            
-            <div class="weather-container">
-                <h3 class="fs-5 text-dark"><i class="bi bi-cloud-sun me-2 text-info"></i>即時天氣查詢</h3>
-                <div class="weather-input-group">
-                    <input type="text" id="cityInput" placeholder="輸入城市名稱，例如：Taipei">
-                    <button onclick="getWeather()">查詢天氣</button>
-                </div>
-                <div id="weatherResult" class="weather-result"></div>
-            </div>
+
+<div class="input-group mb-2">
+    <input type="password" class="form-control" id="gemini-api-key-input" placeholder="請輸入您的 Gemini API Key (必填)">
+    <button class="btn btn-secondary" type="button" title="您的金鑰將僅用於本次會話"><i class="bi bi-info-circle"></i></button>
+</div>
+
+<div class="chat-container" id="ai-chat-history">
+    <div class="chat-message ai-message"><strong>🤖 AI:</strong> 歡迎！問我附近的毛孩地點或社交問題吧！</div>
+</div>
+<div class="input-group mb-4">
+    <input type="text" class="form-control" id="gemini-input" placeholder="問：附近哪隻狗狗最親人？">
+    <button class="btn btn-primary" type="button" onclick="sendAIQuery()">發送</button>
+</div>
 
             <h5 class="text-uppercase text-primary my-4 pt-3 border-top border-light"><i class="bi bi-rewind me-2"></i>毛孩社交卡片</h5>
 
@@ -645,21 +641,32 @@
         
         // AI Chat 邏輯 
         function sendAIQuery() {
-            const inputElement = document.getElementById('gemini-input');
-            const query = inputElement.value.trim();
-            const chatHistory = document.getElementById('ai-chat-history');
-            
-            if (!query) return;
+    const keyInputElement = document.getElementById('gemini-api-key-input');
+    const inputElement = document.getElementById('gemini-input');
+    
+    const userKey = keyInputElement.value.trim(); // ⭐ 獲取使用者輸入的金鑰
+    const query = inputElement.value.trim();
+    const chatHistory = document.getElementById('ai-chat-history');
+    
+    if (!userKey) {
+        alert("請先輸入您的 Gemini API Key。");
+        return;
+    }
+    if (!query) return;
 
             chatHistory.innerHTML += `<div class="chat-message user-message"><strong>您:</strong> ${query}</div>`;
-            inputElement.value = '';
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            
-            fetch('/ai_chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
-            })
+    inputElement.value = '';
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+    
+    // ⭐ 修改 fetch 請求：將 Key 和 Query 一起傳送到後端
+    fetch('/ai_chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            query: query,
+            api_key: userKey // ⭐ 傳送金鑰
+        })
+    })
             .then(response => response.json())
             .then(data => {
                 // ⭐ 修正：檢查 data.response 是否存在
