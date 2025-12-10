@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename 
 import requests 
 from datetime import datetime
+import time # ⭐ 新增：用於重試延遲
 
 # --- 新增 Gemini 相關模組 ---
 from google import genai
@@ -35,7 +36,7 @@ if not os.path.exists(MESSAGES_FILE):
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx'}
 
 # ----------------------------------------------------
-# 輔助函數 (JSON & 檔案處理)
+# 輔助函數 (地理編碼、JSON & 檔案處理)
 # ----------------------------------------------------
 
 def geocode_address(address):
@@ -104,7 +105,7 @@ def get_pet_post_by_id(post_id):
 # ----------------------------------------------------
 # Gemini AI 配置區 (已移除全域 Client)
 # ----------------------------------------------------
-# ⭐ 移除硬編碼金鑰和全域 client 初始化！
+# ⭐ 僅保留模型名稱和系統上下文
 MODEL_NAME = "gemini-2.5-flash"
 PET_CONTEXT = """
 您是寵物社交地圖『毛孩交友天地』的 AI 智慧助手，請以友善、簡潔且中文繁體回答。
@@ -139,7 +140,6 @@ def show_upload_form():
 def handle_upload():
     """處理毛孩資料和圖片上傳，並儲存到 pets.json"""
     
-    # ... (上傳邏輯保持不變)
     if 'petImage' not in request.files or request.files['petImage'].filename == '':
         return "請上傳毛孩照片", 400
 
@@ -206,42 +206,62 @@ def handle_upload():
     return render_template('success_page.html', pet_name=pet_data['name'], pet_id=pet_data['id'], image_url=pet_data['image_url'])
 
 
-# ⭐ 4. 處理 Gemini AI 聊天請求 (使用使用者提供的金鑰) ⭐
+# ⭐ 4. 處理 Gemini AI 聊天請求 (使用使用者 Key + 重試機制) ⭐
 @app.route('/ai_chat', methods=['POST'])
 def ai_chat():
-    """處理前端發送的 AI 聊天請求，使用使用者提供的 API Key"""
+    """處理前端發送的 AI 聊天請求，使用使用者提供的 API Key，並加入重試機制"""
     data = request.json
     user_query = data.get('query')
-    user_api_key = data.get('api_key') # 獲取使用者傳入的金鑰
+    user_api_key = data.get('api_key')
     
     if not user_api_key:
          return jsonify({"response": "🤖 錯誤：請先在輸入框中提供您的 Gemini API Key。"}, 400)
     if not user_query:
         return jsonify({"response": "請輸入您的問題。"}, 400)
-        
-    try:
-        # 每次請求都使用使用者金鑰來初始化 Client
-        local_client = genai.Client(api_key=user_api_key)
-        
-        response = local_client.models.generate_content(
-            model=MODEL_NAME, # 使用全域定義的模型名稱
-            contents=[user_query],
-            config=genai.types.GenerateContentConfig(
-                system_instruction=PET_CONTEXT 
+    
+    # 定義重試次數和延遲時間
+    MAX_RETRIES = 3
+    DELAY_SECONDS = 2
+    
+    for attempt in range(MAX_RETRIES):
+        try:
+            # 每次請求都使用使用者金鑰來初始化 Client
+            local_client = genai.Client(api_key=user_api_key)
+            
+            response = local_client.models.generate_content(
+                model=MODEL_NAME, 
+                contents=[user_query],
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=PET_CONTEXT 
+                )
             )
-        )
-        return jsonify({"response": response.text})
+            # 成功取得回應，跳出迴圈並回傳
+            return jsonify({"response": response.text})
 
-    except APIError as e:
-        # 針對 API 錯誤 (例如金鑰無效、權限不足) 給出更明確的提示
-        error_message = f"🤖 API 錯誤：請檢查您輸入的 API Key 是否有效。錯誤詳情：{e}"
-        print(f"API Error with User Key: {error_message}")
-        return jsonify({"response": error_message}, 500)
+        except APIError as e:
+            error_details = str(e)
+            
+            # 503 UNAVAILABLE (服務超載) 或 429 RESOURCE_EXHAUSTED 是暫時性錯誤
+            if "503" in error_details or "429" in error_details or "UNAVAILABLE" in error_details:
+                print(f"🤖 API 暫時性錯誤 (嘗試 {attempt + 1}/{MAX_RETRIES})：{error_details}")
+                
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(DELAY_SECONDS)
+                    continue # 繼續下一次迴圈 (重試)
+                else:
+                    # 最後一次嘗試失敗，回傳錯誤
+                    error_message = f"🤖 API 錯誤：Google 服務超載或 Key 無效。請稍後再試。"
+                    return jsonify({"response": error_message}, 500)
+            else:
+                # 處理其他非暫時性 API 錯誤 (如 403 PERMISSION_DENIED, 400 Bad Request)
+                error_message = f"🤖 嚴重的 API 錯誤：請檢查您的 API Key 是否有效。錯誤詳情：{error_details}"
+                print(f"Serious API Error: {error_message}")
+                return jsonify({"response": error_message}, 500)
         
-    except Exception as e:
-        # 處理其他未知錯誤
-        print(f"Unknown Error in AI chat: {e}")
-        return jsonify({"response": "🤖 發生未知錯誤，請檢查您的網路連線或 API Key。"}, 500)
+        except Exception as e:
+            # 處理其他未知錯誤 (如網路問題)
+            print(f"Unknown Error in AI chat: {e}")
+            return jsonify({"response": "🤖 發生未知錯誤，請檢查您的網路連線。"}, 500)
 
 
 # 5. 動態寵物數位護照頁面
