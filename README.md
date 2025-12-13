@@ -29,4 +29,4 @@
 | **線上網站網址 (Render)** | [https://socialpet-txxm.onrender.com](https://socialpet-txxm.onrender.com) |
 | **線上網站網址 (Vercel)** | [https://socialpet-psi.vercel.app/](https://socialpet-psi.vercel.app/) |
 | **程式碼 GitHub Repo** | [https://github.com/yc-115/socialpet](https://github.com/yc-115/socialpet.git) |
-| **專題展示影片** | [請在此貼上您的專題展示影片連結] |
+| **專題展示影片** | [[https://www.youtube.com/watch?v=TOgQy5NhLto](https://www.youtube.com/watch?v=TOgQy5NhLto)] |
